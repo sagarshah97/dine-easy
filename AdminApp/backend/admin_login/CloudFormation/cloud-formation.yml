@@ -1,0 +1,202 @@
+Resources:
+  CheckAdminCredentialsLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: checkAdminCredentials
+      Code:
+        S3Bucket: sdp7-lambdas
+        S3Key: admin.zip
+      Handler: index.handler
+      Role: arn:aws:iam::954219915288:role/LabRole
+      Runtime: nodejs16.x
+      Timeout: 30
+
+  AdminApiGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: admin-api
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  CheckAdminCredsGatewayResponse4:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_4XX
+      RestApiId:
+        Ref: AdminApiGateway
+      StatusCode: "200"
+
+  CheckAdminCredsGatewayResponse5:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_5XX
+      RestApiId:
+        Ref: AdminApiGateway
+      StatusCode: "200"
+
+  CheckAdminCredsApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId:
+        Ref: AdminApiGateway
+      ParentId:
+        Fn::GetAtt: [AdminApiGateway, RootResourceId]
+      PathPart: checkAdminCreds
+
+  CheckAdminCredsApiMethodOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: AdminApiGateway
+      ResourceId:
+        Ref: CheckAdminCredsApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: "{}"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+          ResponseModels:
+            application/json: Empty
+
+  CheckAdminCredsApiMethodPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: AdminApiGateway
+      ResourceId:
+        Ref: CheckAdminCredsApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CheckAdminCredentialsLambda.Arn}/invocations"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        Credentials: arn:aws:iam::954219915288:role/LabRole
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseModels:
+            application/json: Empty
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+
+  CheckAdminCredsApiUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId:
+            Ref: AdminApiGateway
+          Stage:
+            Ref: CheckAdminCredsApiStage
+      UsagePlanName: CheckAdminCredsApiUsagePlan
+
+  CheckAdminCredsApiUsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId:
+        Ref: CheckAdminCredsApiKey
+      KeyType: API_KEY
+      UsagePlanId:
+        Ref: CheckAdminCredsApiUsagePlan
+
+  CheckAdminCredsApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: admin-key
+      Description: API Key for admin-api API Gateway
+      Enabled: true
+      GenerateDistinctId: true
+
+  CheckAdminCredsApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref CheckAdminCredsApiDeployment
+      RestApiId: !Ref AdminApiGateway
+      StageName: dev-admin-creds
+
+  CheckAdminCredsApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref AdminApiGateway
+    DependsOn:
+      - CheckAdminCredsApiMethodPost
+
+  FetchApiKeyLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: fetchApiKeyAdmin
+      Runtime: python3.9
+      Handler: index.lambda_handler
+      Role: arn:aws:iam::954219915288:role/LabRole
+      Code:
+        ZipFile: |
+          import boto3
+          import cfnresponse
+
+          def get_api_gateway_key_value(api_key_id):
+              apigateway_client = boto3.client('apigateway')
+              
+              try:
+                  response = apigateway_client.get_api_key(apiKey=api_key_id, includeValue=True)
+                  api_key_value = response['value']
+                  return api_key_value
+              except Exception as e:
+                  raise Exception(f"Error fetching API Key Value: {str(e)}")
+
+          def lambda_handler(event, context):
+              try:
+                  api_key_id = event['ResourceProperties']['ApiKeyId']
+                  api_key_value = get_api_gateway_key_value(api_key_id)
+
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS, {"APIKeyValue": api_key_value})
+              except Exception as e:
+                  cfnresponse.send(event, context, cfnresponse.FAILED, {"Error": str(e)})
+
+  CustomResource3:
+    Type: Custom::InvokeFetchApiKey
+    Properties:
+      ServiceToken: !GetAtt FetchApiKeyLambda.Arn
+      ApiKeyId: !Ref CheckAdminCredsApiKey
+
+Outputs:
+  GetReservationsByUserAPI:
+    Value: !Join
+      - ""
+      - - "https://"
+        - !Ref AdminApiGateway
+        - ".execute-api.us-east-1.amazonaws.com/dev-admin-creds/checkAdminCreds"
+    Description: API Endpoint to Get Reservations
+
+  ReservationAPIKey:
+    Value: !GetAtt CustomResource3.APIKeyValue
+    Description: API Key Value for Admin API
