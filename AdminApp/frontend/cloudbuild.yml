@@ -1,0 +1,25 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "gcr.io/serverless-401215/admin-app"
+      - "."
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "gcr.io/serverless-401215/admin-app"
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "gcloud"
+    args:
+      - "run"
+      - "deploy"
+      - "admin-app"
+      - "--image"
+      - "gcr.io/serverless-401215/admin-app"
+      - "--region"
+      - "us-central1"
+      - "--platform"
+      - "managed"
+options:
+  logging: "CLOUD_LOGGING_ONLY"
