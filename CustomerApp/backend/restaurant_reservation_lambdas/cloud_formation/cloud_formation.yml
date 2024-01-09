@@ -1,0 +1,779 @@
+Resources:
+  GetReservationByUserLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: getReservationsByUser
+      Code:
+        S3Bucket: sdp7-lambdas
+        S3Key: getBU.zip
+      Handler: index.handler
+      Role: arn:aws:iam::954219915288:role/LabRole
+      Runtime: nodejs16.x
+      Timeout: 30
+
+  GetReservationByRestaurantLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: getReservationsByRestaurant
+      Code:
+        S3Bucket: sdp7-lambdas
+        S3Key: getBR.zip
+      Handler: index.handler
+      Role: arn:aws:iam::954219915288:role/LabRole
+      Runtime: nodejs16.x
+      Timeout: 30
+
+  CreateReservationLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: createReservation
+      Code:
+        S3Bucket: sdp7-lambdas
+        S3Key: create.zip
+      Handler: index.handler
+      Role: arn:aws:iam::954219915288:role/LabRole
+      Runtime: nodejs16.x
+      Timeout: 30
+
+  UpdateReservationLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: updateReservation
+      Code:
+        S3Bucket: sdp7-lambdas
+        S3Key: update.zip
+      Handler: index.handler
+      Role: arn:aws:iam::954219915288:role/LabRole
+      Runtime: nodejs16.x
+      Timeout: 30
+
+  DeleteReservationLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: deleteReservation
+      Code:
+        S3Bucket: sdp7-lambdas
+        S3Key: delete.zip
+      Handler: index.handler
+      Role: arn:aws:iam::954219915288:role/LabRole
+      Runtime: nodejs16.x
+      Timeout: 30
+
+  # API GATEWAY FOR GET RESERVATION BY USER
+  ReservationApiGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: reservation-api
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  GetReservationBUGatewayResponse4:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_4XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  GetReservationBUGatewayResponse5:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_5XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  GetReservationBUApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ParentId:
+        Fn::GetAtt: [ReservationApiGateway, RootResourceId]
+      PathPart: getReservationByUser
+
+  GetReservationBUApiMethodOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: GetReservationBUApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: "{}"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+          ResponseModels:
+            application/json: Empty
+
+  GetReservationBUApiMethodPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: GetReservationBUApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetReservationByUserLambda.Arn}/invocations"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        Credentials: arn:aws:iam::954219915288:role/LabRole
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseModels:
+            application/json: Empty
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+
+  GetBRGatewayResponse4:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_4XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  GetBRGatewayResponse5:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_5XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  GetReservationBRApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ParentId:
+        Fn::GetAtt: [ReservationApiGateway, RootResourceId]
+      PathPart: getReservationByRestaurant
+
+  GetReservationBRApiMethodOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: GetReservationBRApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: "{}"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+          ResponseModels:
+            application/json: Empty
+
+  GetReservationBRApiMethodPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: GetReservationBRApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetReservationByRestaurantLambda.Arn}/invocations"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        Credentials: arn:aws:iam::954219915288:role/LabRole
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseModels:
+            application/json: Empty
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+
+  CreateGatewayResponse4:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_4XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  CreateGatewayResponse5:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_5XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  CreateReservationApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ParentId:
+        Fn::GetAtt: [ReservationApiGateway, RootResourceId]
+      PathPart: createReservation
+
+  CreateReservationApiMethodOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: CreateReservationApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: "{}"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+          ResponseModels:
+            application/json: Empty
+
+  CreateReservationApiMethodPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: CreateReservationApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateReservationLambda.Arn}/invocations"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        Credentials: arn:aws:iam::954219915288:role/LabRole
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseModels:
+            application/json: Empty
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+
+  UpdateGatewayResponse4:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_4XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  UpdateGatewayResponse5:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_5XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  UpdateReservationApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ParentId:
+        Fn::GetAtt: [ReservationApiGateway, RootResourceId]
+      PathPart: updateReservation
+
+  UpdateReservationApiMethodOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: UpdateReservationApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: "{}"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+          ResponseModels:
+            application/json: Empty
+
+  UpdateReservationApiMethodPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: UpdateReservationApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateReservationLambda.Arn}/invocations"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        Credentials: arn:aws:iam::954219915288:role/LabRole
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseModels:
+            application/json: Empty
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+
+  DeleteGatewayResponse4:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_4XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  DeleteGatewayResponse5:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_5XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  DeleteReservationApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ParentId:
+        Fn::GetAtt: [ReservationApiGateway, RootResourceId]
+      PathPart: deleteReservation
+
+  DeleteReservationApiMethodOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: DeleteReservationApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: "{}"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+          ResponseModels:
+            application/json: Empty
+
+  DeleteReservationApiMethodPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: DeleteReservationApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteReservationLambda.Arn}/invocations"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        Credentials: arn:aws:iam::954219915288:role/LabRole
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseModels:
+            application/json: Empty
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+
+  GetReservationBUApiUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId:
+            Ref: ReservationApiGateway
+          Stage:
+            Ref: GetReservationBUApiStage
+      UsagePlanName: GetReservationBUApiUsagePlan
+
+  GetReservationBRApiUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId:
+            Ref: ReservationApiGateway
+          Stage:
+            Ref: GetReservationBRApiStage
+      UsagePlanName: GetReservationBRApiUsagePlan
+
+  CreateReservationApiUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId:
+            Ref: ReservationApiGateway
+          Stage:
+            Ref: CreateReservationApiStage
+      UsagePlanName: CreateReservationApiUsagePlan
+
+  UpdateReservationApiUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId:
+            Ref: ReservationApiGateway
+          Stage:
+            Ref: UpdateReservationApiStage
+      UsagePlanName: UpdateReservationApiUsagePlan
+
+  DeleteReservationApiUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId:
+            Ref: ReservationApiGateway
+          Stage:
+            Ref: DeleteReservationApiStage
+      UsagePlanName: DeleteReservationApiUsagePlan
+
+  GetReservationBUApiUsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId:
+        Ref: ReservationApiKey
+      KeyType: API_KEY
+      UsagePlanId:
+        Ref: GetReservationBUApiUsagePlan
+
+  GetReservationBRApiUsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId:
+        Ref: ReservationApiKey
+      KeyType: API_KEY
+      UsagePlanId:
+        Ref: GetReservationBRApiUsagePlan
+
+  CreateReservationApiUsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId:
+        Ref: ReservationApiKey
+      KeyType: API_KEY
+      UsagePlanId:
+        Ref: CreateReservationApiUsagePlan
+
+  UpdateReservationApiUsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId:
+        Ref: ReservationApiKey
+      KeyType: API_KEY
+      UsagePlanId:
+        Ref: UpdateReservationApiUsagePlan
+
+  DeleteReservationApiUsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId:
+        Ref: ReservationApiKey
+      KeyType: API_KEY
+      UsagePlanId:
+        Ref: DeleteReservationApiUsagePlan
+
+  ReservationApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: reservation-key
+      Description: API Key for reservation-api API Gateway
+      Enabled: true
+      GenerateDistinctId: true
+
+  GetReservationBUApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref GetReservationBUApiDeployment
+      RestApiId: !Ref ReservationApiGateway
+      StageName: dev-get-bu
+
+  GetReservationBRApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref GetReservationBRApiDeployment
+      RestApiId: !Ref ReservationApiGateway
+      StageName: dev-get-br
+
+  CreateReservationApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref CreateReservationApiDeployment
+      RestApiId: !Ref ReservationApiGateway
+      StageName: dev-create
+
+  UpdateReservationApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref UpdateReservationApiDeployment
+      RestApiId: !Ref ReservationApiGateway
+      StageName: dev-update
+
+  DeleteReservationApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref DeleteReservationApiDeployment
+      RestApiId: !Ref ReservationApiGateway
+      StageName: dev-delete
+
+  GetReservationBUApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref ReservationApiGateway
+    DependsOn:
+      - GetReservationBUApiMethodPost
+
+  GetReservationBRApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref ReservationApiGateway
+    DependsOn:
+      - GetReservationBRApiMethodPost
+
+  CreateReservationApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref ReservationApiGateway
+    DependsOn:
+      - CreateReservationApiMethodPost
+
+  UpdateReservationApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref ReservationApiGateway
+    DependsOn:
+      - UpdateReservationApiMethodPost
+
+  DeleteReservationApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref ReservationApiGateway
+    DependsOn:
+      - DeleteReservationApiMethodPost
+
+  FetchApiKeyLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: fetchApiKey
+      Runtime: python3.9
+      Handler: index.lambda_handler
+      Role: arn:aws:iam::954219915288:role/LabRole
+      Code:
+        ZipFile: |
+          import boto3
+          import cfnresponse
+
+          def get_api_gateway_key_value(api_key_id):
+              apigateway_client = boto3.client('apigateway')
+              
+              try:
+                  response = apigateway_client.get_api_key(apiKey=api_key_id, includeValue=True)
+                  api_key_value = response['value']
+                  return api_key_value
+              except Exception as e:
+                  raise Exception(f"Error fetching API Key Value: {str(e)}")
+
+          def lambda_handler(event, context):
+              try:
+                  api_key_id = event['ResourceProperties']['ApiKeyId']
+                  api_key_value = get_api_gateway_key_value(api_key_id)
+
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS, {"APIKeyValue": api_key_value})
+              except Exception as e:
+                  cfnresponse.send(event, context, cfnresponse.FAILED, {"Error": str(e)})
+
+  CustomResource1:
+    Type: Custom::InvokeFetchApiKey
+    Properties:
+      ServiceToken: !GetAtt FetchApiKeyLambda.Arn
+      ApiKeyId: !Ref ReservationApiKey
+
+Outputs:
+  GetReservationsByUserAPI:
+    Value: !Join
+      - ""
+      - - "https://"
+        - !Ref ReservationApiGateway
+        - ".execute-api.us-east-1.amazonaws.com/dev-get-bu/getReservationByUser"
+    Description: API Endpoint to Get Reservations
+
+  GetReservationsByRestaurantAPI:
+    Value: !Join
+      - ""
+      - - "https://"
+        - !Ref ReservationApiGateway
+        - ".execute-api.us-east-1.amazonaws.com/dev-get-br/getReservationByRestaurant"
+    Description: API Endpoint to Get Reservations
+
+  CreateReservationsAPI:
+    Value: !Join
+      - ""
+      - - "https://"
+        - !Ref ReservationApiGateway
+        - ".execute-api.us-east-1.amazonaws.com/dev-create/createReservation"
+    Description: API Endpoint to Create Reservation
+
+  UpdateReservationsAPI:
+    Value: !Join
+      - ""
+      - - "https://"
+        - !Ref ReservationApiGateway
+        - ".execute-api.us-east-1.amazonaws.com/dev-update/updateReservation"
+    Description: API Endpoint to Update Reservation
+
+  DeleteReservationsAPI:
+    Value: !Join
+      - ""
+      - - "https://"
+        - !Ref ReservationApiGateway
+        - ".execute-api.us-east-1.amazonaws.com/dev-delete/deleteReservation"
+    Description: API Endpoint to Delete Reservation
+
+  ReservationAPIKey:
+    Value: !GetAtt CustomResource1.APIKeyValue
+    Description: API Key Value for Reservation API
