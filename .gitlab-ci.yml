@@ -1,0 +1,88 @@
+stages:
+  - dependencies
+  - deploy
+
+.cache: &cache
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - CustomerApp/frontend/node_modules
+    - PartnerApp/frontend/node_modules
+    - AdminApp/frontend/node_modules
+
+install_dependencies_customer_app:
+  cache:
+    <<: *cache
+    policy: push
+  stage: dependencies
+  image: node
+  only:
+    - "main"
+  script:
+    - cd CustomerApp/frontend
+    - npm install
+
+install_dependencies_partner_app:
+  cache:
+    <<: *cache
+    policy: push
+  stage: dependencies
+  image: node
+  only:
+    - "main"
+  script:
+    - cd PartnerApp/frontend
+    - npm install
+
+install_dependencies_admin_app:
+  cache:
+    <<: *cache
+    policy: push
+  stage: dependencies
+  image: node
+  only:
+    - "main"
+  script:
+    - cd AdminApp/frontend
+    - npm install
+
+deploy_customer_app:
+  stage: deploy
+  image: google/cloud-sdk
+  services:
+    - docker:dind
+  only:
+    - "main"
+  script:
+    - echo $GCP_SERVICE_KEY > gcloud-service-key.json
+    - gcloud auth activate-service-account --key-file gcloud-service-key.json
+    - gcloud config set project serverless-401215
+    - cd CustomerApp/frontend
+    - gcloud builds submit . --config=cloudbuild.yml
+
+deploy_partner_app:
+  stage: deploy
+  image: google/cloud-sdk
+  services:
+    - docker:dind
+  only:
+    - "main"
+  script:
+    - echo $GCP_SERVICE_KEY > gcloud-service-key.json
+    - gcloud auth activate-service-account --key-file gcloud-service-key.json
+    - gcloud config set project serverless-401215
+    - cd PartnerApp/frontend
+    - gcloud builds submit . --config=cloudbuild.yml
+
+deploy_admin_app:
+  stage: deploy
+  image: google/cloud-sdk
+  services:
+    - docker:dind
+  only:
+    - "main"
+  script:
+    - echo $GCP_SERVICE_KEY > gcloud-service-key.json
+    - gcloud auth activate-service-account --key-file gcloud-service-key.json
+    - gcloud config set project serverless-401215
+    - cd AdminApp/frontend
+    - gcloud builds submit . --config=cloudbuild.yml
