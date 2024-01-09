@@ -1,0 +1,635 @@
+Resources:
+  GetRestaurantAvailabilityLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: getRestaurantAvailability
+      Code:
+        S3Bucket: sdp7-lambdas
+        S3Key: getRA.zip
+      Handler: index.handler
+      Role: arn:aws:iam::954219915288:role/LabRole
+      Runtime: nodejs16.x
+      Timeout: 30
+
+  GetRestaurantDetailsLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: getRestaurantDetails
+      Code:
+        S3Bucket: sdp7-lambdas
+        S3Key: getRD.zip
+      Handler: index.handler
+      Role: arn:aws:iam::954219915288:role/LabRole
+      Runtime: nodejs16.x
+      Timeout: 30
+
+  UpdateRestaurantDetailsLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: updateRestaurantDetails
+      Code:
+        S3Bucket: sdp7-lambdas
+        S3Key: updateRD.zip
+      Handler: index.handler
+      Role: arn:aws:iam::954219915288:role/LabRole
+      Runtime: nodejs16.x
+      Timeout: 30
+
+  CreateSNSSubscriptionLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: createSNSSubscription
+      Code:
+        S3Bucket: sdp7-lambdas
+        S3Key: createSNS.zip
+      Handler: index.handler
+      Role: arn:aws:iam::954219915288:role/LabRole
+      Runtime: nodejs16.x
+      Timeout: 30
+
+  # API GATEWAY
+  ReservationApiGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: reservation-partner-api
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  GetRestaurantAvailabilityGatewayResponse4:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_4XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  GetRestaurantAvailabilityGatewayResponse5:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_5XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  GetRestaurantAvailabilityApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ParentId:
+        Fn::GetAtt: [ReservationApiGateway, RootResourceId]
+      PathPart: getRestaurantAvailability
+
+  GetRestaurantAvailabilityApiMethodOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: GetRestaurantAvailabilityApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: "{}"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+          ResponseModels:
+            application/json: Empty
+
+  GetRestaurantAvailabilityApiMethodPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: GetRestaurantAvailabilityApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetRestaurantAvailabilityLambda.Arn}/invocations"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        Credentials: arn:aws:iam::954219915288:role/LabRole
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseModels:
+            application/json: Empty
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+
+  GetRestaurantDetailsGatewayResponse4:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_4XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  GetRestaurantDetailsGatewayResponse5:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_5XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  GetRestaurantDetailsApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ParentId:
+        Fn::GetAtt: [ReservationApiGateway, RootResourceId]
+      PathPart: getRestaurantDetails
+
+  GetRestaurantDetailsApiMethodOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: GetRestaurantDetailsApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: "{}"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+          ResponseModels:
+            application/json: Empty
+
+  GetRestaurantDetailsApiMethodPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: GetRestaurantDetailsApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetRestaurantDetailsLambda.Arn}/invocations"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        Credentials: arn:aws:iam::954219915288:role/LabRole
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseModels:
+            application/json: Empty
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+
+  UpdateRestaurantDetailsGatewayResponse4:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_4XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  UpdateRestaurantDetailsGatewayResponse5:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_5XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  UpdateRestaurantDetailsApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ParentId:
+        Fn::GetAtt: [ReservationApiGateway, RootResourceId]
+      PathPart: updateRestaurantDetails
+
+  UpdateRestaurantDetailsApiMethodOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: UpdateRestaurantDetailsApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: "{}"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+          ResponseModels:
+            application/json: Empty
+
+  UpdateRestaurantDetailsApiMethodPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: UpdateRestaurantDetailsApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateRestaurantDetailsLambda.Arn}/invocations"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        Credentials: arn:aws:iam::954219915288:role/LabRole
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseModels:
+            application/json: Empty
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+
+  CreateSNSGatewayResponse4:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_4XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  CreateSNSGatewayResponse5:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      ResponseType: DEFAULT_5XX
+      RestApiId:
+        Ref: ReservationApiGateway
+      StatusCode: "200"
+
+  CreateSNSApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ParentId:
+        Fn::GetAtt: [ReservationApiGateway, RootResourceId]
+      PathPart: createSNS
+
+  CreateSNSApiMethodOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: CreateSNSApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: "{}"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+          ResponseModels:
+            application/json: Empty
+
+  CreateSNSApiMethodPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: ReservationApiGateway
+      ResourceId:
+        Ref: CreateSNSApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateSNSSubscriptionLambda.Arn}/invocations"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        Credentials: arn:aws:iam::954219915288:role/LabRole
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseModels:
+            application/json: Empty
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+
+  GetRestaurantAvailabilityApiUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId:
+            Ref: ReservationApiGateway
+          Stage:
+            Ref: GetRestaurantAvailabilityApiStage
+      UsagePlanName: GetRestaurantAvailabilityApiUsagePlan
+
+  GetRestaurantDetailsApiUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId:
+            Ref: ReservationApiGateway
+          Stage:
+            Ref: GetRestaurantDetailsApiStage
+      UsagePlanName: GetRestaurantDetailsApiUsagePlan
+
+  UpdateRestaurantDetailsApiUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId:
+            Ref: ReservationApiGateway
+          Stage:
+            Ref: UpdateRestaurantDetailsApiStage
+      UsagePlanName: UpdateRestaurantDetailsApiUsagePlan
+
+  CreateSNSApiUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId:
+            Ref: ReservationApiGateway
+          Stage:
+            Ref: CreateSNSApiStage
+      UsagePlanName: CreateSNSApiUsagePlan
+
+  GetRestaurantAvailabilityApiUsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId:
+        Ref: ReservationApiKey
+      KeyType: API_KEY
+      UsagePlanId:
+        Ref: GetRestaurantAvailabilityApiUsagePlan
+
+  GetRestaurantDetailsApiUsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId:
+        Ref: ReservationApiKey
+      KeyType: API_KEY
+      UsagePlanId:
+        Ref: GetRestaurantDetailsApiUsagePlan
+
+  UpdateRestaurantDetailsApiUsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId:
+        Ref: ReservationApiKey
+      KeyType: API_KEY
+      UsagePlanId:
+        Ref: UpdateRestaurantDetailsApiUsagePlan
+
+  CreateSNSApiUsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId:
+        Ref: ReservationApiKey
+      KeyType: API_KEY
+      UsagePlanId:
+        Ref: CreateSNSApiUsagePlan
+
+  ReservationApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: reservation-partner-key
+      Description: API Key for reservation-api API Gateway
+      Enabled: true
+      GenerateDistinctId: true
+
+  GetRestaurantAvailabilityApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref GetRestaurantAvailabilityApiDeployment
+      RestApiId: !Ref ReservationApiGateway
+      StageName: dev-get-ra
+
+  GetRestaurantDetailsApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref GetRestaurantDetailsApiDeployment
+      RestApiId: !Ref ReservationApiGateway
+      StageName: dev-get-rd
+
+  UpdateRestaurantDetailsApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref UpdateRestaurantDetailsApiDeployment
+      RestApiId: !Ref ReservationApiGateway
+      StageName: dev-update-rd
+
+  CreateSNSApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref CreateSNSApiDeployment
+      RestApiId: !Ref ReservationApiGateway
+      StageName: dev-create-sns
+
+  GetRestaurantAvailabilityApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref ReservationApiGateway
+    DependsOn:
+      - GetRestaurantAvailabilityApiMethodPost
+
+  GetRestaurantDetailsApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref ReservationApiGateway
+    DependsOn:
+      - GetRestaurantDetailsApiMethodPost
+
+  UpdateRestaurantDetailsApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref ReservationApiGateway
+    DependsOn:
+      - UpdateRestaurantDetailsApiMethodPost
+
+  CreateSNSApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref ReservationApiGateway
+    DependsOn:
+      - CreateSNSApiMethodPost
+
+  FetchApiKeyPartnerLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: fetchApiKeyPartner
+      Runtime: python3.9
+      Handler: index.lambda_handler
+      Role: arn:aws:iam::954219915288:role/LabRole
+      Code:
+        ZipFile: |
+          import boto3
+          import cfnresponse
+
+          def get_api_gateway_key_value(api_key_id):
+              apigateway_client = boto3.client('apigateway')
+              
+              try:
+                  response = apigateway_client.get_api_key(apiKey=api_key_id, includeValue=True)
+                  api_key_value = response['value']
+                  return api_key_value
+              except Exception as e:
+                  raise Exception(f"Error fetching API Key Value: {str(e)}")
+
+          def lambda_handler(event, context):
+              try:
+                  api_key_id = event['ResourceProperties']['ApiKeyId']
+                  api_key_value = get_api_gateway_key_value(api_key_id)
+
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS, {"APIKeyValue": api_key_value})
+              except Exception as e:
+                  cfnresponse.send(event, context, cfnresponse.FAILED, {"Error": str(e)})
+
+  CustomResource2:
+    Type: Custom::InvokeFetchApiKey
+    Properties:
+      ServiceToken: !GetAtt FetchApiKeyPartnerLambda.Arn
+      ApiKeyId: !Ref ReservationApiKey
+
+Outputs:
+  GetRestaurantAvailabilityAPI:
+    Value: !Join
+      - ""
+      - - "https://"
+        - !Ref ReservationApiGateway
+        - ".execute-api.us-east-1.amazonaws.com/dev-get-ra/getRestaurantAvailability"
+    Description: API Endpoint to Get Restaurant Availability
+
+  GetRestaurantDetailsAPI:
+    Value: !Join
+      - ""
+      - - "https://"
+        - !Ref ReservationApiGateway
+        - ".execute-api.us-east-1.amazonaws.com/dev-get-rd/getRestaurantDetails"
+    Description: API Endpoint to Get Restaurant Details
+
+  UpdateRestaurantDetailsAPI:
+    Value: !Join
+      - ""
+      - - "https://"
+        - !Ref ReservationApiGateway
+        - ".execute-api.us-east-1.amazonaws.com/dev-update-rd/updateRestaurantDetails"
+    Description: API Endpoint to Update Restaurant Details
+
+  CreateSNSAPI:
+    Value: !Join
+      - ""
+      - - "https://"
+        - !Ref ReservationApiGateway
+        - ".execute-api.us-east-1.amazonaws.com/dev-create-sns/createSNS"
+    Description: API Endpoint to Update Restaurant Details
+
+  ReservationAPIKey:
+    Value: !GetAtt CustomResource2.APIKeyValue
+    Description: API Key Value for Partner Reservation API
