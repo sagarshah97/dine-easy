@@ -1,0 +1,8 @@
+.maps-css {
+  height: 56px;
+  width: 30rem;
+  border: 1px solid grey;
+  border-radius: 5px;
+  padding: 1%;
+  font-size: 17px;
+}
