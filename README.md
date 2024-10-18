@@ -1,8 +1,8 @@
 # DINEASY
 
-DinEasy harnesses the capabilities of Google Cloud Platform (GCP) and Amazon Web Services (AWS) serverless architecture. This comprehensive platform offers an array of features tailored to enhance the reservation process. The Customer App provides a seamless experience for guests, allowing them to effortlessly reserve tables, access real-time availability, make special requests, and receive timely confirmation notifications. The Partner App equips restaurant staff with tools to efficiently manage bookings, update availability, set menu items and prices, and engage with customers for a holistic view of reservations. Meanwhile, the Admin App provides super admins with oversight of application usage, comprehensive data analytics, and management capabilities to ensure the smooth functioning of the platform. Each component is intricately designed to optimize the reservation journey, ensuring an intuitive user interface, real-time updates, and robust security measures. 
+DinEasy harnesses the capabilities of Google Cloud Platform (GCP) and Amazon Web Services (AWS) serverless architecture. This comprehensive platform offers an array of features tailored to enhance the reservation process. The Customer App provides a seamless experience for guests, allowing them to effortlessly reserve tables, access real-time availability, make special requests, and receive timely confirmation notifications. The Partner App equips restaurant staff with tools to efficiently manage bookings, update availability, set menu items and prices, and engage with customers for a holistic view of reservations. Meanwhile, the Admin App provides super admins with oversight of application usage, comprehensive data analytics, and management capabilities to ensure the smooth functioning of the platform. Each component is intricately designed to optimize the reservation journey, ensuring an intuitive user interface, real-time updates, and robust security measures.
 
-## Authors
+## Contributors
 
 - Sagar Shah
 - Aniketh Kazi
@@ -28,11 +28,12 @@ DinEasy harnesses the capabilities of Google Cloud Platform (GCP) and Amazon Web
 ## Deployment
 
 - Employed a CloudFormation template to orchestrate the provisioning of entire cloud resources, encompassing a suite of five Lambda functions for the CRUD operations and a single API Gateway featuring distinct API endpoints for each lambda. This template will help in spinning up the environment in minimal time with the required resources in any AWS account.
-- Hosted all the lambda codes in the S3 bucket which can be directly used by the CloudFormation template to provision the lambdas. 
-- Leveraged an API Key-based API Gateway to bolster data security in transit, fortifying the overall system's robustness. API Key ensures that no other party can access the request body data without the appropriate key. 
-- Taken measures to safeguard Personally Identifiable Information (PII) by encrypting user data within the Firestore Database, enhancing data protection by rendering it infeasible to access sensitive information at rest. 
+- Hosted all the lambda codes in the S3 bucket which can be directly used by the CloudFormation template to provision the lambdas.
+- Leveraged an API Key-based API Gateway to bolster data security in transit, fortifying the overall system's robustness. API Key ensures that no other party can access the request body data without the appropriate key.
+- Taken measures to safeguard Personally Identifiable Information (PII) by encrypting user data within the Firestore Database, enhancing data protection by rendering it infeasible to access sensitive information at rest.
 
 ### URLs
+
 - Customer App URL: `https://test-volx6e7mpq-uc.a.run.app`
 - Partner App URL: `https://partners-app-volx6e7mpq-uc.a.run.app`
 - Admin App URL: `https://admin-app-volx6e7mpq-uc.a.run.app/`
