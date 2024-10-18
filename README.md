@@ -16,7 +16,7 @@ DinEasy harnesses the capabilities of Google Cloud Platform (GCP) and Amazon Web
 - Partner App: The restaurants will use this app to get to know about the bookings.
 - Admin App: This app will be used by the super admins to get to know the usage of the application.
 
-## Key Layers
+## Key Layers and Services
 
 - Frontend: A responsive web application built using any React.js and MUI.
 - Backend Services: Serverless functions for handling reservations, notifications, and analytics.
