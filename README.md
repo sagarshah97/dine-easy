@@ -6,15 +6,12 @@
 ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-web-services&logoColor=white)
 ![Google Cloud](https://img.shields.io/badge/GoogleCloud-%234285F4.svg?style=for-the-badge&logo=google-cloud&logoColor=white)
 
+DinEasy harnesses the capabilities of ```Google Cloud Platform (GCP)``` and ```Amazon Web Services (AWS)``` serverless architecture. This comprehensive platform offers an array of features tailored to enhance the reservation process. The Customer App provides a seamless experience for guests, allowing them to effortlessly reserve tables, access real-time availability, make special requests, and receive timely confirmation notifications. The Partner App equips restaurant staff with tools to efficiently manage bookings, update availability, set menu items and prices, and engage with customers for a holistic view of reservations. Meanwhile, the Admin App provides super admins with oversight of application usage, comprehensive data analytics, and management capabilities to ensure the smooth functioning of the platform. Each component is intricately designed to optimize the reservation journey, ensuring an intuitive user interface, real-time updates, and robust security measures.
+
 ![Version](https://img.shields.io/badge/version-0.1.0-80b918)
 ![Pipeline](https://img.shields.io/badge/pipeline-passing-80b918)
 ![ReactVersion](https://img.shields.io/badge/react-v18.3-f6bd60)
 ![NodeVersion](https://img.shields.io/badge/node-v16.2-f6bd60)
-
-
-
-
-DinEasy harnesses the capabilities of Google Cloud Platform (GCP) and Amazon Web Services (AWS) serverless architecture. This comprehensive platform offers an array of features tailored to enhance the reservation process. The Customer App provides a seamless experience for guests, allowing them to effortlessly reserve tables, access real-time availability, make special requests, and receive timely confirmation notifications. The Partner App equips restaurant staff with tools to efficiently manage bookings, update availability, set menu items and prices, and engage with customers for a holistic view of reservations. Meanwhile, the Admin App provides super admins with oversight of application usage, comprehensive data analytics, and management capabilities to ensure the smooth functioning of the platform. Each component is intricately designed to optimize the reservation journey, ensuring an intuitive user interface, real-time updates, and robust security measures.
 
 ## Contributors
 
