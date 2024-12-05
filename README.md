@@ -60,7 +60,7 @@ Each component is intricately designed to optimize the reservation journey, ensu
 - Username: `admin@dineasy.com`
 - Password: `adminadmin`
 
-##  ![](https://api.iconify.design/ion/create.svg?height=28&color=%23ba3329)References
+##  ![](https://api.iconify.design/ion/create.svg?height=28&color=%23ba3329) References
 
 - [AWS Services](https://aws.amazon.com/)
 - [AWS Lambda](https://aws.amazon.com/pm/lambda/)
