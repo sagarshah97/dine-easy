@@ -16,8 +16,8 @@ Each component is intricately designed to optimize the reservation journey, ensu
 
 ![Version](https://img.shields.io/badge/version-0.1.0-80b918)
 ![Pipeline](https://img.shields.io/badge/pipeline-passing-80b918)
-![ReactVersion](https://img.shields.io/badge/react-v18.3-e63946)
-![NodeVersion](https://img.shields.io/badge/node-v16.2-e63946)
+![ReactVersion](https://img.shields.io/badge/react-v18.3-0077b6)
+![NodeVersion](https://img.shields.io/badge/node-v16.2-0077b6)
 
 ## Contributors
 
