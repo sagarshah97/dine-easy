@@ -19,7 +19,7 @@ Each component is intricately designed to optimize the reservation journey, ensu
 ![ReactVersion](https://img.shields.io/badge/react-v18.3-0077b6)
 ![NodeVersion](https://img.shields.io/badge/node-v16.2-0077b6)
 
-## Contributors
+## ![](https://api.iconify.design/ion/people-sharp.svg?height=28&color=%23ba3329) Contributors
 
 - Sagar Shah
 - Aniketh Kazi
@@ -27,13 +27,13 @@ Each component is intricately designed to optimize the reservation journey, ensu
 - Dhrumil Gosaliya
 - Kainat Khan
 
-## App Components
+## ![](https://api.iconify.design/ion/apps.svg?height=28&color=%23ba3329) App Components
 
 - Customer App: This app will be used by the customers to book restaurants.
 - Partner App: The restaurants will use this app to get to know about the bookings.
 - Admin App: This app will be used by the super admins to get to know the usage of the application.
 
-## Key Layers and Services
+## ![](https://api.iconify.design/ion/layers.svg?height=28&color=%23ba3329) Key Layers and Services
 
 - Frontend: A responsive web application built using any React.js and MUI.
 - Backend Services: Serverless functions for handling reservations, notifications, and analytics.
@@ -42,7 +42,7 @@ Each component is intricately designed to optimize the reservation journey, ensu
 - APIs: Amazon API Gateway for managing RESTful APIs.
 - Data Visualization: Looker Studio embedded views on the React.js app and is dynamic in nature. The data is integrated and brought in from the Firebase database utilizing BigQuery.
 
-## Deployment
+## ![](https://api.iconify.design/ion/cloud-upload.svg?height=28&color=%23ba3329) Deployment
 
 - Employed a CloudFormation template to orchestrate the provisioning of entire cloud resources, encompassing a suite of five Lambda functions for the CRUD operations and a single API Gateway featuring distinct API endpoints for each lambda. This template will help in spinning up the environment in minimal time with the required resources in any AWS account.
 - Hosted all the lambda codes in the S3 bucket which can be directly used by the CloudFormation template to provision the lambdas.
@@ -60,7 +60,7 @@ Each component is intricately designed to optimize the reservation journey, ensu
 - Username: `admin@dineasy.com`
 - Password: `adminadmin`
 
-## References
+##  ![](https://api.iconify.design/ion/create.svg?height=28&color=%23ba3329)References
 
 - [AWS Services](https://aws.amazon.com/)
 - [AWS Lambda](https://aws.amazon.com/pm/lambda/)
